@@ -16,107 +16,89 @@ import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 // FixMe: implement other components and functions used in SearchScreen here (don't just put all the JSX in SearchScreen below)
 
-
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'Third Item',
-  },
-];
-
-  function Item({ id, title }) {
-    const onPress = () => {
-      console.log('joy');
-    }
-    
-    return (
-      <TouchableOpacity
-        onPress={onPress}
-        style={[
-          styles.item,
-          { backgroundColor: true ? '#6e3b6e' : '#f9c2ff' },
-        ]}
-      >
-        <Text style={styles.title}>{title}</Text>
-      </TouchableOpacity>
-    );
+// flatlist items
+function Item({ id, title }) {
+  
+  const onPress = () => {
+    console.log('joy');
+    //set to the state then pass to the context
   }
   
-
-
-
-
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[
+        styles.item,
+        { backgroundColor: true ? '#6e3b6e' : '#f9c2ff' },
+      ]}
+    >
+      <Text style={styles.title}>{title}</Text>
+    </TouchableOpacity>
+  );
+}
+  
 
 export default function SearchScreen({ navigation }) {
+  
+  // states
   const { ServerURL, addToWatchlist } = useStocksContext();
-  const [state, setState] = useState({ /* FixMe: initial state here */ });
+  const [state, setState] = useState([]);
+  const [value, setText] = useState('');//for text box 
 
-  // can put more code here
-  const [value, onChangeText] = useState('');
+  
   useEffect(() => {
     // FixMe: fetch symbol names from the server and save in local SearchScreen state
     const url = 'http://131.181.190.87:3001/all';
     fetch(url)
       .then(res => res.json())
       .then((result) => {
-        console.log(result);
-        //setRowData(result)
-        //setstockData(result)
+        //console.log(result);
+        setState(result);//all data here
 
       })
       .catch(e => {
           console.log(e)
         });
-
-
   }, []);
 
-  
+    //function for change textbox 
+  const allSymbols = () => {
+    const copyAllSymbols = [...state];//copy all data from the state 
+    // check if the search box is empty 
+    if(value !== '') {
+      const searched = copyAllSymbols.filter(function(items) {
+        return items.symbol.includes(value.toUpperCase());
+      });
+      return searched;
+    }
+
+    return [
+      {
+        symbol: 'no reasults found',
+        name: ''
+      }
+    ]
+
+  }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      {/* <View style={styles.container}>
-        
-      </View> */}
       <SafeAreaView style={styles.container}>
         <TextInput
           style={{ height: 40, borderColor: 'white', borderWidth: 1, backgroundColor: 'white' }}
-          onChangeText={text => onChangeText(text)}
+          onChangeText={text => setText(text)}
           value={value}
         />
-
-        {/* <ScrollView style={styles.scrollView}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={onPress}
-          >
-            <Text style={styles.text}>
-              Lorem ipsum dolor sit amet
-            </Text>
-          </TouchableOpacity>
-        </ScrollView> */}
-
-      <FlatList
-        data={DATA}
-        renderItem={({ item }) => (
-          <Item
-            id={item.id}
-            title={item.title}
-          />
-        )}
-        keyExtractor={item => item.id}
-      />
-
-
-
+        <FlatList
+          data={allSymbols()}
+          renderItem={({ item }) => (
+            <Item
+              id={item.symbol}
+              title={item.symbol}
+            />
+          )}
+          keyExtractor={item => item.symbol}
+        />
       </SafeAreaView>
     </TouchableWithoutFeedback>    
   )
