@@ -16,23 +16,23 @@ import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 // FixMe: implement other components and functions used in SearchScreen here (don't just put all the JSX in SearchScreen below)
 
+
 // flatlist items
-function Item({ id, title }) {
-  
-  const onPress = () => {
-    console.log('joy');
+function Item({ symbol, name, navigation, addToWatchlist}) {
+  const onPress = (symbol) => {
+    
+    addToWatchlist(symbol);
+    navigation.navigate('Stocks')
     //set to the state then pass to the context
   }
   
   return (
     <TouchableOpacity
-      onPress={onPress}
-      style={[
-        styles.item,
-        { backgroundColor: true ? '#6e3b6e' : '#f9c2ff' },
-      ]}
+      onPress={() => onPress(symbol)}
+      style={styles.item}
     >
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.symbol}>{symbol}</Text>
+      <Text style={styles.name}>{name}</Text>
     </TouchableOpacity>
   );
 }
@@ -48,7 +48,7 @@ export default function SearchScreen({ navigation }) {
   
   useEffect(() => {
     // FixMe: fetch symbol names from the server and save in local SearchScreen state
-    const url = 'http://131.181.190.87:3001/all';
+    const url = `${ServerURL}/all`;
     fetch(url)
       .then(res => res.json())
       .then((result) => {
@@ -62,6 +62,7 @@ export default function SearchScreen({ navigation }) {
   }, []);
 
     //function for change textbox 
+
   const allSymbols = () => {
     const copyAllSymbols = [...state];//copy all data from the state 
     // check if the search box is empty 
@@ -93,8 +94,10 @@ export default function SearchScreen({ navigation }) {
           data={allSymbols()}
           renderItem={({ item }) => (
             <Item
-              id={item.symbol}
-              title={item.symbol}
+              navigation = {navigation}
+              addToWatchlist= {addToWatchlist}
+              symbol={item.symbol}
+              name={item.name}
             />
           )}
           keyExtractor={item => item.symbol}
@@ -110,13 +113,19 @@ const styles = StyleSheet.create({
     marginTop: Constants.statusBarHeight,
   },
   item: {
-    backgroundColor: '#f9c2ff',
+    backgroundColor: '#212121',
     padding: 20,
     marginVertical: 8,
     marginHorizontal: 16,
   },
   symbol: {
-    fontSize: 32,
+    fontSize: 20,
+    color:'#FFFFFF'
+
+  },
+  name:{
+    fontSize: 14,
+    color:'#FFFFFF'
   },
 // FixMe: add styles here ...
 // use scaleSize(x) to adjust sizes for small/large screens
