@@ -40,7 +40,7 @@ function Item({ symbol, name, navigation, addToWatchlist}) {
 
 export default function SearchScreen({ navigation }) {
   
-  // states
+  //states
   const { ServerURL, addToWatchlist } = useStocksContext();
   const [state, setState] = useState([]);
   const [value, setText] = useState('');//for text box 
@@ -75,7 +75,7 @@ export default function SearchScreen({ navigation }) {
 
     return [
       {
-        symbol: 'no reasults found',
+        symbol: 'Please enter stock symbol',
         name: ''
       }
     ]
@@ -86,7 +86,8 @@ export default function SearchScreen({ navigation }) {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
         <TextInput
-          style={{ height: 40, borderColor: 'white', borderWidth: 1, backgroundColor: 'white' }}
+          style={styles.inputTxt}
+          //style={{ height: 40,borderWidth: 1, borderColor: 'white',  backgroundColor: 'white' }}
           onChangeText={text => setText(text)}
           value={value}
         />
@@ -112,19 +113,24 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: Constants.statusBarHeight,
   },
+  inputTxt: {
+    padding: scaleSize(16),
+    backgroundColor: '#FFFFFF',
+  },
   item: {
     backgroundColor: '#212121',
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
+    padding: scaleSize(16),
+    marginVertical:scaleSize(8),
   },
   symbol: {
     fontSize: 20,
+    height:scaleSize(20),
     color:'#FFFFFF'
 
   },
   name:{
     fontSize: 14,
+    height:scaleSize(14),
     color:'#FFFFFF'
   },
 // FixMe: add styles here ...
